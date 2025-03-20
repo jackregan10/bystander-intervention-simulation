@@ -28,4 +28,14 @@ Jack Regan
 * Agent (Agent Class)
   * Holds state for all parameters of the agent
 
+* Input Data (.csv)
+  * The desired number of agents in a simulation (how many "people" are in an envrionemtn)
+  * The desired number of times to run a rountine in order to generalize randomness (tentatively 1000)
+  * Intervention Threshold, single routine (tentatively 50%)
+  * Intervention Threshold, ammoratized rountines (tentatively 50%)
+  * Min External Pressure
+  * Max External Pressure
+  * External Pressure Increment
+
+
 
