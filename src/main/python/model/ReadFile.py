@@ -1,6 +1,4 @@
-from genericpath import exists
 from pathlib import Path
-import pandas as pd
 import re
 
 class ReadFile:
