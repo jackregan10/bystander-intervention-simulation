@@ -1,4 +1,6 @@
 from genericpath import exists
+import pandas as pd
+
 
 class WriteFile:
     """
@@ -33,7 +35,7 @@ class WriteFile:
                 while exists(out_file):
                     i += 1
                     out_file = "src/main/output/Defection-Simulation-Output-" + str(i) + ".xlsx"
-            with pd.ExcelWriter(out_file) as writer:       
+            with pd.ExcelWriter(out_file, engine = "openpyxl") as writer:       
                 output_parameters.to_excel(writer, sheet_name = "Parameter Data", index = False)
                 output_data.to_excel(writer, sheet_name = "Output Data", index=False)
         

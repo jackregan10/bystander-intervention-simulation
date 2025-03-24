@@ -1,7 +1,2 @@
-1000 /* Agents */
-10000 /* Runs */
-200 /* Intervention Threshold */
-0.5 /* Routine Threshold */
-0 /* Minimum External Pressure */
-100 /* Maximum External Pressure */
-10 /* External Pressure Increment */
+100 /* Agents */
+100 /* Simulations */

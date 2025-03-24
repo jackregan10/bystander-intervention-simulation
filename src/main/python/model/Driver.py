@@ -1,6 +1,7 @@
 from ReadFile import ReadFile
 from WriteFile import WriteFile
 from Model import Model
+import pandas as pd
 
 class Driver:
     """
@@ -20,9 +21,17 @@ class Driver:
         
         model = Model(file_reader.get_single_values())
         output_data = model.run_routine()
+        parameters = file_reader.get_single_values()
+        
+        output_parameters = pd.DataFrame(
+            {
+                "Agents": [parameters["Agents"]],
+                "Simulations": [parameters["Simulations"]],
+            }
+        )
         
         file_writer = WriteFile()
-        file_writer.write_file(file_reader.get_single_values, output_data)
+        file_writer.write_file(output_parameters, output_data)
 
 if __name__ == "__main__":
     simulation = Driver()

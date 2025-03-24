@@ -1,4 +1,4 @@
-import random
+import numpy as np
 
 class Agent:
     """
@@ -13,7 +13,7 @@ class Agent:
         Args:
             internal_pressure (_float_): the internal pressure of the agent to intervene in a crisis
         """
-        self.internal_pressure = random.randint(0, 100)
+        self.internal_pressure = np.random.uniform(0.2, 0.5)
     def get_internal_pressure(self):
         """
         Get the internal pressure of the agent to intervene in a crisis.

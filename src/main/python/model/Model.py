@@ -1,3 +1,5 @@
+from numpy import integer, mean
+import random
 import pandas as pd
 
 import Utility
@@ -7,11 +9,9 @@ from Agent import Agent
 class Model:
 
     def __init__(self, agent_parameter):
-        self.external_pressure = agent_parameter
-        self.iterations = agent_parameter["Runs"]
-        self.number_agents = agent_parameter["Agents"]
-        self.number_simulations = Utility.determine_simulations(agent_parameter)
-        self.intervention_threshold = agent_parameter["Intervention Threshold"]
+        self.number_agents = int(agent_parameter["Agents"])
+        self.number_simulations = int(agent_parameter["Simulations"])
+        self.intoxication_level = 0.1
 
     def run_routine(self):
         """
@@ -19,38 +19,48 @@ class Model:
         """
         output_data = pd.DataFrame(
             {
-                "Num Simulation": list(range(1, self.iterations)),
-                "Num Routine Iteractions": [self.iterations] * self.number_simulations,
+                "Num Simulation": list(range(1, self.number_simulations + 1)),
+                "Num Agents Intervene": [0.0] * self.number_simulations,
+                "Change": [0.0] * self.number_simulations,
+                "Intoxication Level": [0.0] * self.number_simulations,
+                "Mean Internal Pressure": [0.0] * self.number_simulations
             }
         )
-        ammoratized_num_interventions = 0
+        agent_list = []
+        for j in range(0, self.number_agents):
+            agent_tuple = [Agent(), False]
+            agent_list.append(agent_tuple)
         for f in range(0, self.number_simulations):
-            for i in range(0, self.iterations):
-                agent_list = []
-                for j in range(0, self.number_agents):
-                    agent_tuple = []
-                    agent_tuple.append((Agent(), False))
-                    agent_list.append(agent_tuple)
+            print(f"Running simulation: {f}")
+            output_data.loc[f, "Mean Internal Pressure"] = (
+                mean([agent_list[k][0].get_internal_pressure() for k in range(0, self.number_agents)])
+            )
+            for k in range(0, 10):
                 for k in range(0, self.number_agents):
-                    if agent_list[k][1] == False:
-                        agent_list[k][0].set_internal_pressure(
-                            agent_list[k][0].get_internal_pressure()
-                            + self.external_pressure
-                        )
                     if (
                         agent_list[k][0].get_internal_pressure()
-                        >= self.intervention_threshold
+                        >= random.random()
                     ):
                         agent_list[k][1] = True
                     else:
                         agent_list[k][1] = False
-                num_interventions = 0
-                for l in range(0, self.number_agents):
-                    if agent_list[l][1] == True:
-                        num_interventions += 1
-                if num_interventions > self.number_agents / 2:
-                    ammoratized_num_interventions = 1
-            output_data.loc[f, "Num Routine Iteractions"] = (
-                ammoratized_num_interventions
+            num_interventions = 0
+            for l in range(0, self.number_agents):
+                if agent_list[l][1] is True:
+                    num_interventions += 1
+            output_data.loc[f, "Num Agents Intervene"] = (
+                num_interventions
             )
+            change = agent_list[k][0].get_internal_pressure() * (0.5 - num_interventions / self.number_agents) * 0.01
+            output_data.loc[f, "Change"] = (
+                change
+            )
+            self.intoxication_level = min(1.0, max(0.0, self.intoxication_level + change))
+            output_data.loc[f, "Intoxication Level"] = (
+                self.intoxication_level
+            )
+            for k in range(0, self.number_agents):
+                agent_list[k][0].set_internal_pressure(
+                    min(1.0, max(0.0, agent_list[k][0].get_internal_pressure() - self.intoxication_level))
+                )
         return output_data
