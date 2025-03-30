@@ -1,2 +1,4 @@
 100 /* Agents */
-100 /* Simulations */
+10 /* Simulations */
+1000 /* Maximum Loop Iterations */
+0.03 /* Intoxication Level Increment */

@@ -16,7 +16,7 @@ class WriteFile:
 
         Args:
             output_parameters (DataFrame): Holds parameters and headers.
-            output_data (_type_list): Holds output data and headers.
+            output_data (DataFrame): Holds output data and headers.
 
         Raises:
             ValueError: throws an error if the output data is not a Pandas DataFrame.
