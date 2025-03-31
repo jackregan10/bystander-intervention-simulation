@@ -29,35 +29,46 @@ class Model:
         """
         This method runs the routine of the model.
         """
-        for i in range(0, self.number_simulations):
-            self.intoxication_level = self.intoxication_level_increment * i
-            agent_list = []
-            for k in range(0, self.number_agents):
-                agent_list.append(Agent())
-                agent_list[k].set_internal_pressure(
-                        min(1.0, max(0.0, agent_list[k].get_internal_pressure() - self.intoxication_level))
-                )
-            # Begin with first iteration of the simulation
-            num_interventions = self.determine_agents_intervene(agent_list, i)
-            self.print_output(agent_list, i)
-            while num_interventions > 0 and self.iteration_count < self.loop_threshold:
-                self.iteration_count += 1
-                print(f"Running simulation: {self.iteration_count}")
-                # Calculate change in intoxication level
-                change = agent_list[k].get_internal_pressure() * (0.5 - num_interventions / self.number_agents) * 0.005
-                self.output_data.loc[self.iteration_count, f"{i} - Change"] = (change)
-                # Update intoxication level
-                self.intoxication_level = min(1.0, max(0.0, self.intoxication_level + change))
+        all_runs_data = []
+        for _ in range(100):
+            self.output_data = pd.DataFrame(
+                {
+                    "Num Simulation": list(range(1, self.loop_threshold + 1)),
+                }
+            )
+            self.iteration_count = 0
+            self.intoxication_level = 0.0
+            for i in range(0, self.number_simulations):
+                self.intoxication_level = self.intoxication_level_increment * i
+                agent_list = []
                 for k in range(0, self.number_agents):
+                    agent_list.append(Agent())
                     agent_list[k].set_internal_pressure(
-                        min(1.0, max(0.0, agent_list[k].get_internal_pressure() - self.intoxication_level))
+                            min(1.0, max(0.0, agent_list[k].get_internal_pressure() - self.intoxication_level))
                     )
-                # Determine if agents intervene
+                # Begin with first iteration of the simulation
                 num_interventions = self.determine_agents_intervene(agent_list, i)
                 self.print_output(agent_list, i)
-            self.output_data.loc[self.iteration_count, "---"] = (None)
-            self.iteration_count = 0
-        return self.output_data
+                while num_interventions > 0 and self.iteration_count < self.loop_threshold:
+                    self.iteration_count += 1
+                    print(f"Running simulation: {self.iteration_count}")
+                    # Calculate change in intoxication level
+                    change = agent_list[k].get_internal_pressure() * (0.5 - num_interventions / self.number_agents) * 0.005
+                    self.output_data.loc[self.iteration_count, f"{i} - Change"] = (change)
+                    # Update intoxication level
+                    self.intoxication_level = min(1.0, max(0.0, self.intoxication_level + change))
+                    for k in range(0, self.number_agents):
+                        agent_list[k].set_internal_pressure(
+                            min(1.0, max(0.0, agent_list[k].get_internal_pressure() - self.intoxication_level))
+                        )
+                    # Determine if agents intervene
+                    num_interventions = self.determine_agents_intervene(agent_list, i)
+                    self.print_output(agent_list, i)
+                self.output_data.loc[self.iteration_count, "---"] = (None)
+                self.iteration_count = 0
+            all_runs_data.append(self.output_data)
+        averaged_data = pd.concat(all_runs_data).groupby(level = 0).mean()
+        return averaged_data
     def determine_agents_intervene (self, agent_list, sim):
         """
         Determine if agents intervene.
