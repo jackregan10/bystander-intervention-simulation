@@ -13,12 +13,12 @@ class Model:
         Dictionary containing parameters for the simulation.
     """
     def __init__(self, agent_parameter):
-        self.iteration_count = 0
-        self.intoxication_level = 0.0
-        self.number_agents = int(agent_parameter["Agents"])
-        self.number_simulations = int(agent_parameter["Simulations"])
-        self.intoxication_level_increment = float(agent_parameter["Intoxication Level Increment"])
-        self.loop_threshold = int(agent_parameter["Maximum Loop Iterations"])
+        self.iteration_count = 0 # number of iterations within a single simulation
+        self.intoxication_level = 0.0 # initial intoxication level
+        self.number_agents = int(agent_parameter["Agents"]) # number of agents in the simulation
+        self.number_simulations = int(agent_parameter["Simulations"]) # number of simulations in which the initial intoxication level is increased
+        self.intoxication_level_increment = float(agent_parameter["Intoxication Level Increment"]) # increment of intoxication level for each simulation
+        self.loop_threshold = int(agent_parameter["Maximum Loop Iterations"]) # maximum number of iterations for each simulation (if applicable)
         self.output_data = pd.DataFrame(
             {
                 "Num Simulation": list(range(1, self.loop_threshold + 1)),
@@ -29,19 +29,14 @@ class Model:
         """
         This method runs the routine of the model.
         """
-        all_runs_data = []
-        for _ in range(100):
-            self.output_data = pd.DataFrame(
-                {
-                    "Num Simulation": list(range(1, self.loop_threshold + 1)),
-                }
-            )
-            self.iteration_count = 0
-            self.intoxication_level = 0.0
+        all_runs_data = [] # list to hold ammoratized data from all runs
+        for _ in range(100): # simulations are averaged for 100 runs
+            # begin simulations
             for i in range(0, self.number_simulations):
                 self.intoxication_level = self.intoxication_level_increment * i
                 agent_list = []
                 for k in range(0, self.number_agents):
+                    # set initial internal pressure of each agent
                     agent_list.append(Agent())
                     agent_list[k].set_internal_pressure(
                             min(1.0, max(0.0, agent_list[k].get_internal_pressure() - self.intoxication_level))
@@ -64,7 +59,7 @@ class Model:
                     # Determine if agents intervene
                     num_interventions = self.determine_agents_intervene(agent_list, i)
                     self.print_output(agent_list, i)
-                self.output_data.loc[self.iteration_count, "---"] = (None)
+                self.output_data.loc[self.iteration_count, f"--{i}--"] = (None)
                 self.iteration_count = 0
             all_runs_data.append(self.output_data)
         averaged_data = pd.concat(all_runs_data).groupby(level = 0).mean()
