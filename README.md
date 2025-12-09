@@ -13,4 +13,4 @@ This project is for an assignment in POLSCI 427: Make your Own World at Duke Uni
 
 To run the program, call main in the Driver class.
 
-Ouptur files will be uploaded to the src/main/output folder as excel files.
+Output files will be uploaded to the src/main/output folder as excel files.
