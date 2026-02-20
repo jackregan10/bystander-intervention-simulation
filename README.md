@@ -1,4 +1,7 @@
 # bystander-intervention-simulation
+
+An agent-based system that simulates bystandar intervention subject to an intoxication level and several enviornoment variables.
+
 This project is for an assignment in POLSCI 427: Make your Own World at Duke University. Intructor: David Siegel.
 
 To run the program, call main in the Driver class.
